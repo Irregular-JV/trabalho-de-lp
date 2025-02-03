@@ -72,168 +72,93 @@ int indice_dos_zeros(int matrix[4][4], int n) {
 
 
 
-int cobrimento(int matrix[4][4], int n) {
-    // Fazer uma cópia da matriz
+void cobrimento(int matrix[4][4], int n) {
     int i, j;
     int mat[4][4];
 
+    // Copiando a matriz original
     for(i = 0; i < n; i++) {
         for(j = 0; j < n; j++) {
             mat[i][j] = matrix[i][j];
         }
     }
 
-    // Inicio da lógica de cobrimento
-    int qtd_zeros_linha = 0;
-    int *indice_zeros_linha = NULL;
-    int aux = 1;
-
+    int linhaMarcada[4] = {0};
+    int colunaMarcada[4] = {0};
+    
+    // Contar zeros em cada linha e coluna
+    int qtdZerosLinha[4] = {0};
+    int qtdZerosColuna[4] = {0};
+    
     for(i = 0; i < n; i++) {
         for(j = 0; j < n; j++) {
-            for(int k = 0; k < n ; k++) {
-                if(matrix[i][j] == 0) {
-                    qtd_zeros_linha += 1;
-                    aux++;
-                }
-            break;
+            if (mat[i][j] == 0) {
+                qtdZerosLinha[i]++;
+                qtdZerosColuna[j]++;
             }
-        }
-        indice_zeros_linha = realloc(indice_zeros_linha, aux * sizeof(int));
-        indice_zeros_linha[i] = qtd_zeros_linha;
-        qtd_zeros_linha = 0;
-    }
-
-    int qtd_zeros_coluna = 0;
-    int *indice_zeros_coluna = NULL;
-    aux = 1;
-
-    for(i = 0; i < n; i++) {
-        for(j = 0; j < n; j++) {
-            for(int k = 0; k < n ; k++) {
-                if(matrix[j][i] == 0) {
-                    qtd_zeros_coluna += 1;
-                    aux++;
-                }
-            break;
-            }
-        }
-        indice_zeros_coluna = realloc(indice_zeros_coluna, aux * sizeof(int));
-        indice_zeros_coluna[i] = qtd_zeros_coluna;
-        qtd_zeros_coluna = 0;
-    }
-
-
-    // Buscar qual do vetores tem a mauir quantidade de zeros
-    int maior_zeros_linha = 0;
-    int maior_zeros_coluna = 0;
-
-    int menor_zeros_linha = 0;
-    int menor_zeros_coluna = 0;
-    int menor_zeros = 0;
-
-    for(i = 0; i < 4; i++) {
-        if(indice_zeros_linha[i] > maior_zeros_linha) {
-            maior_zeros_linha = indice_zeros_linha[i];
-        }
-        if(indice_zeros_coluna[i] > maior_zeros_coluna) {
-            maior_zeros_coluna = indice_zeros_coluna[i];
-        }
-
-        if(indice_zeros_linha[i] < menor_zeros_linha) {
-            menor_zeros_linha = indice_zeros_linha[i];
-        }
-
-        if(indice_zeros_coluna[i] < menor_zeros_coluna) {
-            menor_zeros_coluna = indice_zeros_coluna[i];
         }
     }
 
-    if(maior_zeros_linha > maior_zeros_coluna) {
-        menor_zeros = maior_zeros_coluna;
-    } else {
-        menor_zeros = maior_zeros_linha;
-    }
+    // Cobrir os zeros com o menor número de linhas e colunas
+    while (1) {
+        int maxLinha = -1, maxColuna = -1;
+        int linhaMax = -1, colunaMax = -1;
 
-    // Verificar se a linha ou coluna tem mais zeros
-    if (maior_zeros_linha > maior_zeros_coluna) {
-
-        // Se o numero de zeros da linha for igual ao numero de zeros da colun, usa a linha
-
-        for (int i = 0; i < n; i++) {
-            if (indice_zeros_linha[i] >= menor_zeros) { // Deve ser >= para incluir todas as linhas que atendem a condição
-                for(int j = 0; j <n; j++) {
-                    mat[i][j] = -1; // Preenchendo corretamente as linhas
-                }
+        // Encontrar a linha ou coluna com mais zeros não cobertos
+        for (i = 0; i < n; i++) {
+            if (qtdZerosLinha[i] > maxLinha && !linhaMarcada[i]) {
+                maxLinha = qtdZerosLinha[i];
+                linhaMax = i;
+            }
+        }
+        for (j = 0; j < n; j++) {
+            if (qtdZerosColuna[j] > maxColuna && !colunaMarcada[j]) {
+                maxColuna = qtdZerosColuna[j];
+                colunaMax = j;
             }
         }
 
-        // Verificando as colunas com mais zeros e onde ja foi preenchido para passar o menor numero de retas
-        for(i = 0; i < n; i++) {
-            for(j = 0; j < n; j++) {
-                if(mat[i][j] == -1) {
-                    for(int k = 0; k < n; k++) {
-                        if(mat[k][j] == 0) {
-                            mat[k][j] = -1;
-                        }
-                    }
+        // Se não há mais zeros a cobrir, sai do loop
+        if (maxLinha == 0 && maxColuna == 0) break;
+
+        // Priorizar cobrir a linha ou coluna com mais zeros
+        if (maxLinha >= maxColuna) {
+            linhaMarcada[linhaMax] = 1;
+            for (j = 0; j < n; j++) {
+                if (mat[linhaMax][j] == 0) {
+                    qtdZerosColuna[j]--;
                 }
             }
-        }
-
-        // Se uma linha ou coluna tem -1 então um dos lados deve ta preenchido
-        // com -1
-        
-        
-
-
-    } else {
-        for (int i = 0; i < n; i++) {
-            if (indice_zeros_coluna[i] >= menor_zeros) { // Deve ser >= para incluir todas as linhas que atendem a condição
-                for (int j = 0; j <n; j++) {
-                    mat[j][i] = -1; // Preenchendo corretamente as colunas
-                }
-            }
-        }
-
-        // Verificando as linhas com mais zeros e onde ja foi preenchido para passar o menor numero de retas
-        for(i = 0; i < n; i++) {
-            for(j = 0; j < n; j++) {
-                if(mat[j][i] == -1) {
-                    for(int k = 0; k < n; k++) {
-                        if(mat[j][k] == 0) {
-                            mat[j][k] = -1;
-                        }
-                    }
+        } else {
+            colunaMarcada[colunaMax] = 1;
+            for (i = 0; i < n; i++) {
+                if (mat[i][colunaMax] == 0) {
+                    qtdZerosLinha[i]--;
                 }
             }
         }
     }
 
-    
-
-
-    
-
-
-
-    printf("\nZeros da linha \n");
-    for(i = 0; i < 4; i++) {
-        printf("%d ", indice_zeros_linha[i]);
+    // Criar matriz final com as marcações
+    for (i = 0; i < n; i++) {
+        if (linhaMarcada[i]) {
+            for (j = 0; j < n; j++) {
+                mat[i][j] = -1; // Linha riscada
+            }
+        }
     }
-    printf("\n");
-
-    printf("\nZeros da coluna \n");
-    for(i = 0; i < 4; i++) {
-        printf("%d ", indice_zeros_coluna[i]);
+    for (j = 0; j < n; j++) {
+        if (colunaMarcada[j]) {
+            for (i = 0; i < n; i++) {
+                mat[i][j] = -1; // Coluna riscada
+            }
+        }
     }
-    printf("\n");
 
-    // Matriz de cobrimento
-    printMat(mat, 4);
-
-    return 0;
-
+    // Exibir resultado do cobrimento
+    printMat(mat, n);
 }
+
 
 // {13,14,0,8}, 
 // {40,0,12,40}, 
