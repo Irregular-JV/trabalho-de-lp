@@ -12,12 +12,12 @@ typedef struct {
 
 
 //Função para criar zeros adicionais
-void designar_zeros(int matrix[4][4], int n, int *indice_zeros_linha, int *indice_zeros_coluna);
-int cobrimento(int matriz[N][N], int tam, int *indice_zeros_linha, int *indice_zeros_coluna);
+void designar_zeros(int **matrix, int n, int *indice_zeros_linha, int *indice_zeros_coluna);
+int cobrimento(int **matriz, int tam, int *indice_zeros_linha, int *indice_zeros_coluna);
 
 
 //Função para imprimir a matriz
-void printMat(int matrix[4][4], int n) {
+void printMat(int **matrix, int n) {
     printf("\n");
     for(int i = 0 ; i < n; i++) {
         for(int j = 0 ; j < n; j++) {
@@ -36,22 +36,31 @@ int main() {
     // Array dos indices de zeros designados
     int *indice_zeros_linha, *indice_zeros_coluna;
 
+    //Reservando memória para os indices designados
     indice_zeros_linha = malloc(N * sizeof(int));
     indice_zeros_coluna = malloc(N * sizeof(int));
 
     //Matriz de teste 
     int matriz[4][4] = {
-        {0,2,4,3}, 
-        {2,0,0,3}, 
-        {0,6,8,2}, 
-        {2,0,0,0}};
+        {13,14,0,8}, 
+        {40,0,12,40}, 
+        {6,64,0,66}, 
+        {0,1,90,0}};
 
-    //Imprimindo a matriz
-    printMat(matriz, 4);
+    
+    int **matriz_dinan = malloc(N * sizeof(int*));
+
+    for(int i = 0; i< N; i++) {
+        matriz_dinan[i] = malloc(N * sizeof(int));
+        for (int j = 0; j< N; j++) {
+            matriz_dinan[i][j] = matriz[i][j];
+        }
+    }
 
     //Função que designa os zeros
-    designar_zeros(matriz, 4, indice_zeros_linha, indice_zeros_coluna);
+    designar_zeros(matriz_dinan, 4, indice_zeros_linha, indice_zeros_coluna);
 
+    /*
     printf("\nzeros designados\n");
 
     //Imprimindo os zeros designados
@@ -62,10 +71,10 @@ int main() {
 
     printf("\n");
     printf("\n");
-    printf("\n");
+    printf("\n");*/
 
     //Função de cobrimento
-    cobrimento(matriz, 4, indice_zeros_linha, indice_zeros_coluna);
+    cobrimento(matriz_dinan, 4, indice_zeros_linha, indice_zeros_coluna);
 
 
     return 0;
@@ -75,7 +84,7 @@ int main() {
 
 
 
-void designar_zeros(int matrix[4][4], int n, int *indice_zeros_linha, int *indice_zeros_coluna) {
+void designar_zeros(int **matrix, int n, int *indice_zeros_linha, int *indice_zeros_coluna) {
     
     //Vetor para armazenar os indices dos zeros
     bool colunas_de_zeros_verificados[n];
@@ -86,7 +95,7 @@ void designar_zeros(int matrix[4][4], int n, int *indice_zeros_linha, int *indic
         *(indice_zeros_coluna + i) = -1;
         colunas_de_zeros_verificados[i] = false;
     }
-
+ 
     //Verificando os zeros designados
     for(int i = 0; i < n; i++) {
         for(int j = 0; j < n; j++) {
@@ -104,7 +113,7 @@ void designar_zeros(int matrix[4][4], int n, int *indice_zeros_linha, int *indic
 
 
 // Fazendo a cobertura dos zeros
-int cobrimento(int matriz[N][N], int tam, int *indice_zeros_linha, int *indice_zeros_coluna){
+int cobrimento(int **matriz, int tam, int *indice_zeros_linha, int *indice_zeros_coluna){
     //Inicializando a struct
     marca_zeros marca;
 
@@ -137,29 +146,32 @@ int cobrimento(int matriz[N][N], int tam, int *indice_zeros_linha, int *indice_z
         }
     }
 
-    // //Passo b)
-    // //Nas linhas marcadas, marcar todas as colunas que contêm zeros.
-    // for(int i = 0; i < tam; i++) {
-    //     if(marca.linha[i]) {
-    //         for(int j = 0; j < tam; j++) {
-    //             if(mat[i][j] == 0) {
-    //                 marca.coluna[j] = true;
-    //             }
-    //         }
-    //     } 
-    // }
+    //Passo b)
+    //Nas linhas marcadas, marcar todas as colunas que contêm zeros.
+    /*
+    for(int i = 0; i < tam; i++) {
+        if(marca.linha[i]) {
+            for(int j = 0; j < tam; j++) {
+                if(mat[i][j] == 0) {
+                    marca.coluna[j] = true;
+                }
+            }
+        } 
+    }
 
-    // //Passo c)
-    // //Nas colunas marcadas, marcar todas as linhas que contêm zeros designados.
-    // for(int i = 0; i < tam; i++) {
-    //     if(marca.coluna[i]) {
-    //         for(int j = 0; j < tam; j++) {
-    //             if(indice_zeros_coluna[j] == i) {
-    //                 marca.linha[j] = true;
-    //             }
-    //         }
-    //     }
-    // }
+    //Passo c)
+    //Nas colunas marcadas, marcar todas as linhas que contêm zeros designados.
+    for(int i = 0; i < tam; i++) {
+        if(marca.coluna[i]) {
+            for(int j = 0; j < tam; j++) {
+                if(indice_zeros_coluna[j] == i) {
+                    marca.linha[j] = true;
+                }
+            }
+        }
+    }
+
+    */
 
     //Passo d)
     //Repetir os passos b) e c) até que não seja possível marcar mais linhas ou colunas.
@@ -254,7 +266,7 @@ int cobrimento(int matriz[N][N], int tam, int *indice_zeros_linha, int *indice_z
     printf("\nMenor: %d\n", menor);
 
     // Matriz após a redução adicional
-    printf("\nMatriz após a redução adicional\n");
+    printf("\nMatriz apos a redução adicional\n");
     for(int i = 0; i < tam; i++) {
         for(int j = 0; j < tam; j++) {
             printf("%d ", mat[i][j]);
@@ -264,7 +276,49 @@ int cobrimento(int matriz[N][N], int tam, int *indice_zeros_linha, int *indice_z
 
     //passo b)
     //Somar o elemento menor nas células que são intersecções ou seja nos que foram riscados 2 vezes
+    //1) Recolocar os números que foram riscados
+    for(int i = 0; i < tam; i++) {
+        for(int j = 0; j < tam; j++) {
+            if(mat[i][j] == -1) {
+                mat[i][j] = matriz[i][j];
+            }
+        }
+
+    }
+
+    //Encontrar os números diferentes de 0 marcados 2 vezes
+    for(int i = 0; i< tam; i++) {
+        if(!marca.linha[i]) {
+            for(int j = 0; j< tam; j++) {
+                if(marca.coluna[j] && mat[i][j] != 0) {
+                    mat[i][j] += menor;
+                }
+            }
+        }
+    }
+
     
+
+
+
+    printf("\nMatriz depois de recolocar os numeros \n");
+    for(int i = 0; i < tam; i++) {
+        for(int j = 0; j < tam; j++) {
+            printf("%d ", mat[i][j]);
+        }
+        printf("\n");
+    } 
+
+        printf("\n");
+        printf("\n");
+        printf("\n");
+
+        // Por fim só designar novamente os zeros
+        designar_zeros(mat, tam,indice_zeros_linha, indice_zeros_coluna);
+        for(int i = 0; i < tam; i++) {
+            printf("%d", *(indice_zeros_linha + i));
+            printf("%d ", *(indice_zeros_coluna + i));
+        }
 
     return 0;
 
