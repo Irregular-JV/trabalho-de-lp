@@ -2,43 +2,29 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define N 4
-
 //Struct para marcar os zeros de forma booleana
 typedef struct {
-    bool linha[N];
-    bool coluna[N];
+    bool *linha;
+    bool *coluna;
 } marca_zeros;
 
 
 //Função para criar zeros adicionais
+void printMat(int **matrix, int n);
 void designar_zeros(int **matrix, int n, int *indice_zeros_linha, int *indice_zeros_coluna);
 int cobrimento(int **matriz, int tam, int *indice_zeros_linha, int *indice_zeros_coluna);
-
-
-//Função para imprimir a matriz
-void printMat(int **matrix, int n) {
-    printf("\n");
-    for(int i = 0 ; i < n; i++) {
-        for(int j = 0 ; j < n; j++) {
-            printf("%d ", matrix[i][j]);
-        }
-        printf("\n");
-    }
-
-    printf("\n");
-}
-
 
 
 //Main-----------------------------------------------------------------------------------------------------------------------------------------------
 int main() {
     // Array dos indices de zeros designados
     int *indice_zeros_linha, *indice_zeros_coluna;
+    int N = 4;
 
     //Reservando memória para os indices designados
     indice_zeros_linha = malloc(N * sizeof(int));
     indice_zeros_coluna = malloc(N * sizeof(int));
+
 
     //Matriz de teste 
     int matriz[4][4] = {
@@ -69,6 +55,19 @@ int main() {
 
 //Fim do main-------------------------------------------------------------------------------------------------------------------------------------
 
+
+//Função para imprimir a matriz
+void printMat(int **matrix, int n) {
+    printf("\n");
+    for(int i = 0 ; i < n; i++) {
+        for(int j = 0 ; j < n; j++) {
+            printf("%d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+
+    printf("\n");
+}
 
 
 void designar_zeros(int **matrix, int n, int *indice_zeros_linha, int *indice_zeros_coluna) {
@@ -103,6 +102,10 @@ void designar_zeros(int **matrix, int n, int *indice_zeros_linha, int *indice_ze
 int cobrimento(int **matriz, int tam, int *indice_zeros_linha, int *indice_zeros_coluna){
     //Inicializando a struct
     marca_zeros marca;
+
+    // Alocando memória para os vetores de marcação booleana
+    marca.linha = malloc(tam * sizeof(bool));
+    marca.coluna = malloc(tam * sizeof(bool));
 
     //Inicializando os vetores de marcação booleana
     for(int i = 0; i < tam; i++){
@@ -266,6 +269,7 @@ int cobrimento(int **matriz, int tam, int *indice_zeros_linha, int *indice_zeros
         printf("%d", *(indice_zeros_linha + i));
         printf("%d ", *(indice_zeros_coluna + i));
     }
+
 
     return 0;
 
