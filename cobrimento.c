@@ -50,6 +50,16 @@ int main() {
     cobrimento(matriz_dinan, 4, indice_zeros_linha, indice_zeros_coluna);
 
 
+    //Liberando os vetor de indices
+    free(indice_zeros_linha);
+    free(indice_zeros_coluna);
+
+    //Liberando a matriz dinamica
+    for(int i = 0; i < N; i++) {
+        free(matriz_dinan[i]);
+    }
+    free(matriz_dinan);
+
     return 0;
 }
 
@@ -270,6 +280,16 @@ int cobrimento(int **matriz, int tam, int *indice_zeros_linha, int *indice_zeros
         printf("%d ", *(indice_zeros_coluna + i));
     }
 
+    //Liberando a matriz
+    for(int i = 0; i < tam; i++) {
+        free(mat[i]);
+    }
+
+    free(mat);
+
+    //Liberando a struct
+    free(marca.linha);
+    free(marca.coluna);
 
     return 0;
 
