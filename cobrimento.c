@@ -60,19 +60,6 @@ int main() {
     //Função que designa os zeros
     designar_zeros(matriz_dinan, 4, indice_zeros_linha, indice_zeros_coluna);
 
-    /*
-    printf("\nzeros designados\n");
-
-    //Imprimindo os zeros designados
-    for(int i = 0; i <  N; i++) {
-        printf("%d", indice_zeros_linha[i]);
-        printf("%d ", indice_zeros_coluna[i]);
-    } 
-
-    printf("\n");
-    printf("\n");
-    printf("\n");*/
-
     //Função de cobrimento
     cobrimento(matriz_dinan, 4, indice_zeros_linha, indice_zeros_coluna);
 
@@ -148,30 +135,9 @@ int cobrimento(int **matriz, int tam, int *indice_zeros_linha, int *indice_zeros
 
     //Passo b)
     //Nas linhas marcadas, marcar todas as colunas que contêm zeros.
-    /*
-    for(int i = 0; i < tam; i++) {
-        if(marca.linha[i]) {
-            for(int j = 0; j < tam; j++) {
-                if(mat[i][j] == 0) {
-                    marca.coluna[j] = true;
-                }
-            }
-        } 
-    }
 
     //Passo c)
     //Nas colunas marcadas, marcar todas as linhas que contêm zeros designados.
-    for(int i = 0; i < tam; i++) {
-        if(marca.coluna[i]) {
-            for(int j = 0; j < tam; j++) {
-                if(indice_zeros_coluna[j] == i) {
-                    marca.linha[j] = true;
-                }
-            }
-        }
-    }
-
-    */
 
     //Passo d)
     //Repetir os passos b) e c) até que não seja possível marcar mais linhas ou colunas.
@@ -220,18 +186,12 @@ int cobrimento(int **matriz, int tam, int *indice_zeros_linha, int *indice_zeros
     }
 
     //Imprimindo a matriz
-    for(int i = 0; i < tam; i++) {
-        for(int j = 0; j < tam; j++) {
-            printf("%d ", mat[i][j]);
-        }
-        printf("\n");
-    }
+    printMat(mat, tam);
 
-    printf("\n");
-    printf("\n");
     printf("\n");
 
     //Imprimindo os numeros não marcados
+    printf("Numeros nao marcados: ");
     for(int i = 0; i < tam; i++) {
         for(int j = 0; j < tam; j++) {
             if(mat[i][j] != -1) {
@@ -266,13 +226,8 @@ int cobrimento(int **matriz, int tam, int *indice_zeros_linha, int *indice_zeros
     printf("\nMenor: %d\n", menor);
 
     // Matriz após a redução adicional
-    printf("\nMatriz apos a redução adicional\n");
-    for(int i = 0; i < tam; i++) {
-        for(int j = 0; j < tam; j++) {
-            printf("%d ", mat[i][j]);
-        }
-        printf("\n");
-    }
+    printf("\nMatriz apos a reducao adicional\n");
+    printMat(mat, tam);
 
     //passo b)
     //Somar o elemento menor nas células que são intersecções ou seja nos que foram riscados 2 vezes
@@ -297,28 +252,20 @@ int cobrimento(int **matriz, int tam, int *indice_zeros_linha, int *indice_zeros
         }
     }
 
-    
+    printf("\nMatriz depois de recolocar os numeros e somar o menor nas interccoes \n");
+    printMat(mat, tam);
 
+    printf("\n");
 
+    // Por fim só designar novamente os zeros
+    designar_zeros(mat, tam,indice_zeros_linha, indice_zeros_coluna);
 
-    printf("\nMatriz depois de recolocar os numeros \n");
+    // Imprimir os indices dos zeros designados
+    printf("Indices dos zeros designados: ");
     for(int i = 0; i < tam; i++) {
-        for(int j = 0; j < tam; j++) {
-            printf("%d ", mat[i][j]);
-        }
-        printf("\n");
-    } 
-
-        printf("\n");
-        printf("\n");
-        printf("\n");
-
-        // Por fim só designar novamente os zeros
-        designar_zeros(mat, tam,indice_zeros_linha, indice_zeros_coluna);
-        for(int i = 0; i < tam; i++) {
-            printf("%d", *(indice_zeros_linha + i));
-            printf("%d ", *(indice_zeros_coluna + i));
-        }
+        printf("%d", *(indice_zeros_linha + i));
+        printf("%d ", *(indice_zeros_coluna + i));
+    }
 
     return 0;
 
